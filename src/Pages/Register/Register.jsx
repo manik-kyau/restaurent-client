@@ -1,15 +1,46 @@
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../Providers/AuthProvider";
+import toast from "react-hot-toast";
 
 const Register = () => {
+
+    const { createUser, logOut, updateUserProfile } = useContext(AuthContext);
+    const navigate = useNavigate();
+
     const {
         register,
         handleSubmit,
+        reset,
         formState: { errors },
     } = useForm();
 
     const onSubmit = (data) => {
         console.log(data);
+        createUser(data.email, data.password)
+            .then(result => {
+                logOut()
+                toast.success('Registration Successfully Done.');
+                navigate("/login")
+                const user = result.user;
+                console.log(user);
+
+                // Update User
+                updateUserProfile(data.name, data.photoURL)
+                .then(()=>{
+                    console.log('Update complate');
+                    reset()
+                })
+                .catch(error=>{
+                    console.log(error);
+                })
+                
+            })
+            .catch(error => {
+                // toast.error('User Allready Created.');
+                console.log(error)
+            })
     }
 
     //   console.log(watch("example")) // watch input value by passing the name of it
@@ -40,6 +71,17 @@ const Register = () => {
                     </div>
 
                     <div className="space-y-1 text-sm">
+                        <label className="block dark:text-gray-600">Photo URL</label>
+                        <input
+                            type="text"
+                            // name="name"
+                            {...register("photoURL", { required: true })}
+                            placeholder="photo URL"
+                            className="w-full px-4 py-3  border outline-none rounded-md dark:border-gray-300 dark:bg-gray-50 dark:text-gray-800 focus:dark:border-violet-600" />
+                        {errors.photoURL?.type === "required" && <span className="text-red-500">Photo URL is required.</span>}
+                    </div>
+
+                    <div className="space-y-1 text-sm">
                         <label className="block dark:text-gray-600">Email</label>
                         <input
                             type="email"
@@ -55,10 +97,11 @@ const Register = () => {
                         <input
                             type="password"
                             name="password"
-                            {...register("password", { required: true, 
-                                minLength: 6, 
-                                maxLength: 20, 
-                                pattern:/(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z])/
+                            {...register("password", {
+                                required: true,
+                                minLength: 6,
+                                maxLength: 20,
+                                pattern: /(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z])/
                             })}
                             placeholder="Password"
                             className="w-full border outline-none px-4 py-3 rounded-md dark:border-gray-300 dark:bg-gray-50 dark:text-gray-800 focus:dark:border-violet-600" />

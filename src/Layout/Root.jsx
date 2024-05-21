@@ -4,10 +4,10 @@ import Navbar from "../Pages/Shared/Navbar/Navbar";
 
 const Root = () => {
     const location = useLocation();
-    console.log(location);
+    // console.log(location);
     const noHeaderFooter = location.pathname.includes('login') || location.pathname.includes('register');
     return (
-        <div>
+        <div className="max-w-[1180px] mx-auto">
             <div className="max-w-[1180px] mx-auto">
                 {noHeaderFooter || <Navbar></Navbar>}
                 <Outlet></Outlet>

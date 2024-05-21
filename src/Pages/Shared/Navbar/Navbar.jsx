@@ -1,15 +1,45 @@
-import { NavLink } from "react-router-dom";
+import { useContext } from "react";
+import { Link, NavLink } from "react-router-dom";
+import { AuthContext } from "../../../Providers/AuthProvider";
+import { FaShoppingCart } from "react-icons/fa";
+import useCart from "../../../Hooks/useCart";
 
 const Navbar = () => {
+
+    const { user, logOut } = useContext(AuthContext);
+    const [cart] = useCart();
 
     const navItems = <>
         <li className=""><NavLink to='/'>Home</NavLink></li>
         <li className=""><NavLink to='/menu'>Our Menu</NavLink></li>
         <li className=""><NavLink to='/order/salad'>Order Food</NavLink></li>
-        <li className=""><NavLink to='/'>DashBoard</NavLink></li>
-        <li className=""><NavLink to='/login'>Login</NavLink></li>
-        <li className=""><NavLink to='/register'>Register</NavLink></li>
+        {/* <li className=""><NavLink to='/'>DashBoard</NavLink></li> */}
+        {user ? '' : <li className=""><NavLink to='/login'>Login</NavLink></li>}
+        {user ? '' : <li className=""><NavLink to='/register'>Register</NavLink></li>}
+        <li>
+            <NavLink to='/dashboard/cart'>
+                <button className="flex items-center text-2xl">
+                    <FaShoppingCart></FaShoppingCart>
+                    <div title="My Cart" className="badge badge-secondary">+{cart.length}</div>
+                </button>
+            </NavLink>
+        </li>
     </>
+
+    // useEffect(()=>{
+    //     fetch('http://localhost:5000/carts')
+    //     .then(res=>res.json())
+    //     .then(data=>setCart(data))
+    // })
+
+    const handleLogout = () => {
+        logOut()
+        .then(result => {
+            console.log(result.user);
+        })
+        .catch(error => console.log(error))
+    }
+
     return (
         <div>
             <div className="navbar fixed z-10 bg-opacity-30 bg-black text-white max-w-[1180px]">
@@ -19,7 +49,7 @@ const Navbar = () => {
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
                         </div>
                         <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-                            { navItems}
+                            {navItems}
                         </ul>
                     </div>
                     <a className="text-white text-xl">Bistro Boss</a>
@@ -30,7 +60,11 @@ const Navbar = () => {
                     </ul>
                 </div>
                 <div className="navbar-end">
-                    <a className="btn">Button</a>
+                    {
+                        user ? <button onClick={handleLogout} className="btn">LogOut</button> : <Link to='/login'>
+                            <button className="btn">Login</button>
+                        </Link>
+                    }
                 </div>
             </div>
         </div>
