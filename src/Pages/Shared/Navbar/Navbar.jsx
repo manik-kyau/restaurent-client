@@ -16,14 +16,14 @@ const Navbar = () => {
         {/* <li className=""><NavLink to='/'>DashBoard</NavLink></li> */}
         {user ? '' : <li className=""><NavLink to='/login'>Login</NavLink></li>}
         {user ? '' : <li className=""><NavLink to='/register'>Register</NavLink></li>}
-        <li>
+        {user && <li>
             <NavLink to='/dashboard/cart'>
                 <button className="flex items-center text-2xl">
                     <FaShoppingCart></FaShoppingCart>
                     <div title="My Cart" className="badge badge-secondary">+{cart.length}</div>
                 </button>
             </NavLink>
-        </li>
+        </li>}
     </>
 
     // useEffect(()=>{

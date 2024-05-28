@@ -3,10 +3,12 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Providers/AuthProvider";
 import toast from "react-hot-toast";
+import useAxiosPublic from "../../Hooks/useAxiosPublic";
 
 const Register = () => {
 
     const { createUser, logOut, updateUserProfile } = useContext(AuthContext);
+    const axiosPublic = useAxiosPublic();
     const navigate = useNavigate();
 
     const {
@@ -21,21 +23,37 @@ const Register = () => {
         createUser(data.email, data.password)
             .then(result => {
                 logOut()
-                toast.success('Registration Successfully Done.');
-                navigate("/login")
-                const user = result.user;
-                console.log(user);
+                // toast.success('Registration Successfully Done.');
+                // navigate("/login")
+                const loggedUser = result.user;
+                console.log(loggedUser);
 
                 // Update User
                 updateUserProfile(data.name, data.photoURL)
-                .then(()=>{
-                    console.log('Update complate');
-                    reset()
-                })
-                .catch(error=>{
-                    console.log(error);
-                })
-                
+                    .then(() => {
+                        // console.log('Update complate');
+                        // create user entry in the database
+                        const userInfo = {
+                            name: data.name,
+                            email: data.email,
+                            image: data.photoURL,
+                        }
+                        axiosPublic.post('/users', userInfo)
+                            .then(res => {
+                                console.log(res.data);
+                                if (res.data.insertedId) {
+                                    console.log('hellow');
+                                    toast.success('Registration Successfully Done.');
+                                    navigate("/login");
+                                    reset();
+                                }
+                            })
+                        
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    })
+
             })
             .catch(error => {
                 // toast.error('User Allready Created.');
