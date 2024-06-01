@@ -3,16 +3,28 @@ import { Link, NavLink } from "react-router-dom";
 import { AuthContext } from "../../../Providers/AuthProvider";
 import { FaShoppingCart } from "react-icons/fa";
 import useCart from "../../../Hooks/useCart";
+import useAdmin from "../../../Hooks/useAdmin";
 
 const Navbar = () => {
 
     const { user, logOut } = useContext(AuthContext);
+    const [isAdmin] = useAdmin();
     const [cart] = useCart();
 
     const navItems = <>
         <li className=""><NavLink to='/'>Home</NavLink></li>
         <li className=""><NavLink to='/menu'>Our Menu</NavLink></li>
         <li className=""><NavLink to='/order/salad'>Order Food</NavLink></li>
+        {
+            // user ? 'true' : 'false'
+            // user ? condition ? 'double true' : 'one true' : 'false'
+        }
+        {
+            user && isAdmin && <li className=""><NavLink to='/dashboard/adminHome'>Dashboard</NavLink></li>
+        }
+        {
+            user && !isAdmin && <li className=""><NavLink to='/dashboard/userHome'>Dashboard</NavLink></li>
+        }
         {/* <li className=""><NavLink to='/'>DashBoard</NavLink></li> */}
         {user ? '' : <li className=""><NavLink to='/login'>Login</NavLink></li>}
         {user ? '' : <li className=""><NavLink to='/register'>Register</NavLink></li>}
@@ -34,10 +46,10 @@ const Navbar = () => {
 
     const handleLogout = () => {
         logOut()
-        .then(result => {
-            console.log(result.user);
-        })
-        .catch(error => console.log(error))
+            .then(result => {
+                console.log(result.user);
+            })
+            .catch(error => console.log(error))
     }
 
     return (
