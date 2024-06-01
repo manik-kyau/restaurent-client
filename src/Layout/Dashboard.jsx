@@ -80,7 +80,7 @@ const Dashboard = () => {
                                 </li>
 
                                 <li>
-                                    <NavLink to='/dashboard/payment'>
+                                    <NavLink to='/dashboard/paymentHistory'>
                                         <MdPayment></MdPayment>
                                         Payment History
                                     </NavLink>

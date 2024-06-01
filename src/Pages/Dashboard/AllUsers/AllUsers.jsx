@@ -67,10 +67,10 @@ const AllUsers = () => {
                         <tr className="">
                             <th></th>
                             {/* <th>User Image</th> */}
-                            <th>User Name</th>
-                            <th>User Email</th>
-                            <th>Role</th>
-                            <th>Action</th>
+                            <th className="">USER NAME</th>
+                            <th>USER EMAIL</th>
+                            <th>ROLE</th>
+                            <th>ACTION</th>
                         </tr>
                     </thead>
                     <tbody>

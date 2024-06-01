@@ -1,16 +1,18 @@
+import { useForm } from "react-hook-form";
 import SectionTitle from "../../../Componants/SectionTitle/SectionTitle";
-import { FaUtensils } from "react-icons/fa";
-import { useForm } from "react-hook-form"
-import useAxiosPublic from "../../../Hooks/useAxiosPublic";
-import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import { useLoaderData } from "react-router-dom";
 import toast from "react-hot-toast";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import useAxiosPublic from "../../../Hooks/useAxiosPublic";
 
 const image_hostion_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
 const image_hostion_api = `https://api.imgbb.com/1/upload?key=${image_hostion_key}`;
 
-const AddItems = () => {
-
+const UpdateItem = () => {
+    const {_id, name, category, image, recipe,price} = useLoaderData();
+    
     const { register, handleSubmit, reset } = useForm();
+
     const axiosPublic = useAxiosPublic();
     const axiosSecure = useAxiosSecure();
     const onSubmit = async (data) => {
@@ -32,24 +34,24 @@ const AddItems = () => {
                 image: res.data.data.display_url,
             }
             // now
-            const menuRes = await axiosSecure.post('/menu', menuItem);
+            const menuRes = await axiosSecure.patch(`/menu/${_id}`, menuItem);
             console.log(menuRes.data);
-            if (menuRes.data.insertedId) {
+            if (menuRes.data.modifiedCount > 0) {
                 // show success popup 
                 reset();
-                toast.success(`${data.name} is added to the menu`);
+                toast.success(`${data.name} Update Successfully Done.`);
             }
         }
         console.log('With image url', res.data);
     };
 
+
     return (
         <div>
             <SectionTitle
-                subHeading={"---What's new?---"}
-                heading={"ADD AN ITEM"}
-            >
-            </SectionTitle>
+            subHeading={'--Refresh Info--'}
+                heading={'UPDATE ITEM'}
+            ></SectionTitle>
 
             <div>
                 <section className="p-6 dark:text-gray-800 bg-[#F3F3F3]">
@@ -62,6 +64,7 @@ const AddItems = () => {
                             <input
                                 {...register("name", { required: true })}
                                 type="text"
+                                defaultValue={name}
                                 placeholder="Recipe name"
                                 className="input input-bordered w-full "
                             />
@@ -72,7 +75,7 @@ const AddItems = () => {
                                 <div className="label">
                                     <span className="label-text">Category*</span>
                                 </div>
-                                <select defaultValue="default" {...register("category", { required: true })}
+                                <select defaultValue={category} {...register("category", { required: true })}
                                     className="select select-bordered w-full ">
                                     <option disabled value="default">Select a Category</option>
                                     <option value="salad">Salad</option>
@@ -91,6 +94,7 @@ const AddItems = () => {
                                 <input
                                     {...register("price", { required: true })}
                                     type="number"
+                                    defaultValue={price}
                                     placeholder="Price"
                                     className="input input-bordered w-full"
                                 />
@@ -104,6 +108,7 @@ const AddItems = () => {
                             <textarea
                                 {...register("recipe", { required: true })}
                                 type="text"
+                                defaultValue={recipe}
                                 placeholder="Recipe Details*..."
                                 className="input input-bordered w-full h-[150px]"
                             ></textarea>
@@ -113,14 +118,15 @@ const AddItems = () => {
                             <input
                                 {...register("image", { required: true })}
                                 type="file"
+                                // defaultValue={image}
                                 className="file-input file-input-bordered w-full"
                             />
                         </div>
 
                         <div>
                             <button type="submit" className="flex items-center gap-2 bg-gradient-to-r from-[#835D23] to-[#B58130] px-6 py-2 text-white text-lg font-semibold mt-7 rounded-md">
-                                Add Item
-                                <FaUtensils></FaUtensils>
+                                Update Recipe Details
+                                {/* <FaUtensils></FaUtensils> */}
                             </button>
                         </div>
                     </form>
@@ -130,4 +136,4 @@ const AddItems = () => {
     );
 };
 
-export default AddItems;
+export default UpdateItem;
